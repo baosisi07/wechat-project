@@ -114,15 +114,10 @@ exports.searchByDouban = async (q) => {
         subjects = data.subjects
     }
     if (subjects.length > 0) {
-
-        var queryArray = []
-        subjects.forEach(function(item) {
-            queryArray.push(async(item) => {
-                console.log(item.id)
+        subjects.forEach(async(item) =>{
                 var movie = await Movie.findOne({
                     doubanId: item.id
                 }).exec()
-                console.log(movie)
                 if (movie) {
                     movies.push(movie)
                 } else {
@@ -141,14 +136,11 @@ exports.searchByDouban = async (q) => {
 
                 }
 
-            })
+            
         })
-
-        await queryArray
         movies.forEach(function(movie) {
             updateMovies(movie)
         })
     }
     return movies
-
 }

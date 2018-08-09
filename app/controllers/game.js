@@ -29,6 +29,6 @@ exports.find = async(ctx, next) => {
         var movie = await Movie.searchById(id)
         params.movie = movie
         console.log(params)
-        await ctx.render("wechat/game", params)
+        await ctx.render("wechat/movie", params)
     }
 }

@@ -4,7 +4,7 @@ var path = require("path")
 var wx = require("./index")
 var Movie = require("../app/api/movie")
 var wechatApi = wx.getWechat()
-var host = "http://f17a3f74.ngrok.io/"
+var host = "http://a16df112.ngrok.io/"
 exports.reply = async(ctx, next) => {
     var message = ctx.weixin
     if (message.MsgType === "event") {
@@ -12,7 +12,7 @@ exports.reply = async(ctx, next) => {
             if (message.EventKey) {
                 console.log("扫二维码进来：" + message.EventKey)
             }
-            ctx.body = "亲爱的，欢迎订阅这个公众号\n" +
+            ctx.body = "亲爱的，终于等到你\n" +
                 "回复1~3，回复文字消息\n" +
                 "回复4~14，各种消息推送\n" +
                 "回复首页，进入电影首页\n" +
@@ -49,8 +49,7 @@ exports.reply = async(ctx, next) => {
             console.log("地理位置选择器的事件推送" + message.SendLocationInfo.Label + " " + message.SendLocationInfo.Poiname)
         }
     } else if (message.MsgType === "voice") {
-        console.log(message)
-        var voiceText = message.Recognition
+        var voiceText = message.Recognition.slice(0,-1)
         var movies = await Movie.searchByName(voiceText)
         if (!movies || movies.length === 0) {
             movies = await Movie.searchByDouban(voiceText)
@@ -69,6 +68,7 @@ exports.reply = async(ctx, next) => {
         } else {
             reply = "没有查询到与" + voiceText + "匹配的电影，要不换个名字试试"
         }
+
         ctx.body = reply
     } else if (message.MsgType === "text") {
         var content = message.Content
@@ -211,21 +211,21 @@ exports.reply = async(ctx, next) => {
         } else {
             var movies = await Movie.searchByName(content)
             if (!movies || movies.length === 0) {
-                movies = await Movie.searchByDouban(content)
-                if (movies && movies.length > 0) {
-                    reply = []
-                    movies = movies.slice(0, 8)
-                    movies.forEach(function(movie) {
-                        reply.push({
-                            title: movie.title,
-                            description: movie.title,
-                            picUrl: movie.poster,
-                            url: host + "movie/" + movie.id
-                        })
+                movies = await Movie.searchByDouban(content)  
+            }
+            if (movies && movies.length > 0) {
+                reply = []
+                movies = movies.slice(0, 8)
+                movies.forEach(function(movie) {
+                    reply.push({
+                        title: movie.title,
+                        description: movie.title,
+                        picUrl: movie.poster,
+                        url: host + "movie/" + movie.id
                     })
-                } else {
-                    reply = "没有查询到与" + content + "匹配的电影，要不换个名字试试"
-                }
+                })
+            } else {
+                reply = "没有查询到与" + content + "匹配的电影，要不换个名字试试"
             }
 
         }

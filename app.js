@@ -5,9 +5,9 @@ var path = require("path")
 var fs = require("fs")
 var mongoose = require("mongoose")
 var wechat = require("./app/controllers/wechat")
-var dbUrl = 'mongodb://localhost/imooc'
+var dbUrl = 'mongodb://localhost:27017/imooc'
 
-mongoose.connect(dbUrl)
+mongoose.connect(dbUrl, { useNewUrlParser: true })
 
 var models_path = __dirname + '/app/models'
 var walk = function(path) {

@@ -4,7 +4,7 @@ var Movie = require("../api/movie")
 exports.index = async(ctx, next) => {
 
     var categories = await Movie.findAll()
-    await ctx.render('pages/', {
+    await ctx.render('pages/index', {
         title: 'imooc 首页',
         categories: categories
     })
