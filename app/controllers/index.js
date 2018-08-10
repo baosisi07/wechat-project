@@ -1,4 +1,4 @@
-
+"use strict"
 var Movie = require("../api/movie")
 // index page
 exports.index = async(ctx, next) => {

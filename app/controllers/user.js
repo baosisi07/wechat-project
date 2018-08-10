@@ -1,114 +1,95 @@
+"use strict"
 var mongoose = require('mongoose')
 var User = mongoose.model('User')
 
 // signup
-exports.showSignup = function(req, res) {
-  res.render('signup', {
+exports.showSignup = async(ctx, next) => {
+  await ctx.render('pages/signup', {
     title: '注册页面'
   })
 }
 
-exports.showSignin = function(req, res) {
-  res.render('signin', {
+exports.showSignin = async(ctx, next) => {
+  await  ctx.render('pages/signin', {
     title: '登录页面'
   })
 }
 
-exports.signup = function(req, res) {
-  var _user = req.body.user
+exports.signup = async(ctx, next) => {
+  var _user = ctx.request.body.user
 
-  User.findOne({name: _user.name},  function(err, user) {
-    if (err) {
-      console.log(err)
-    }
+  var user = await User.findOne({name: _user.name}).exec()
 
     if (user) {
-      return res.redirect('/signin')
+      ctx.redirect('/signin')
+      return next()
     }
     else {
       user = new User(_user)
-      user.save(function(err, user) {
-        if (err) {
-          console.log(err)
-        }
-
-        res.redirect('/')
-      })
+      await user.save()
+      ctx.session.user = user
+        ctx.redirect('/')
     }
-  })
 }
 
 // signin
-exports.signin = function(req, res) {
-  var _user = req.body.user
+exports.signin = async(ctx, next) => {
+  var _user = ctx.request.body.user
   var name = _user.name
   var password = _user.password
 
-  User.findOne({name: name}, function(err, user) {
-    if (err) {
-      console.log(err)
-    }
+  var user = await User.findOne({name: name}).exec()
 
     if (!user) {
-      return res.redirect('/signup')
+      ctx.redirect('/signup')
     }
 
-    user.comparePassword(password, function(err, isMatch) {
-      if (err) {
-        console.log(err)
-      }
+    var isMatch = await user.comparePassword(password, user.password)
 
       if (isMatch) {
-        req.session.user = user
+        ctx.session.user = user
 
-        return res.redirect('/')
+        ctx.redirect('/')
       }
       else {
-        return res.redirect('/signin')
+        ctx.redirect('/signin')
       }
-    })
-  })
 }
 
 // logout
-exports.logout =  function(req, res) {
-  delete req.session.user
+exports.logout =  async(ctx, next) => {
+  delete ctx.session.user
   //delete app.locals.user
 
-  res.redirect('/')
+  ctx.redirect('/')
 }
 
 // userlist page
-exports.list = function(req, res) {
-  User.fetch(function(err, users) {
-    if (err) {
-      console.log(err)
-    }
-
-    res.render('userlist', {
-      title: 'imooc 用户列表页',
-      users: users
-    })
+exports.list = async(ctx, next) => {
+  var users = await User.find({})
+  .sort('meta.updateAt')
+  .exec()
+  await ctx.render('pages/userlist', {
+    title: 'imooc 用户列表页',
+    users: users
   })
 }
 
 // midware for user
-exports.signinRequired = function(req, res, next) {
-  var user = req.session.user
-
+exports.signinRequired = async(ctx, next) => {
+  var user = ctx.session.user
   if (!user) {
-    return res.redirect('/signin')
+    ctx.redirect('/signin')
+  } else {
+    await next()
   }
-
-  next()
 }
 
-exports.adminRequired = function(req, res, next) {
-  var user = req.session.user
-
+exports.adminRequired = async(ctx, next) => {
+  var user = ctx.session.user
   if (user.role <= 10) {
-    return res.redirect('/signin')
+    ctx.redirect('/signin')
+  } else {
+    await next()
   }
-
-  next()
 }

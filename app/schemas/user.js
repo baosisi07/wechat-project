@@ -52,12 +52,13 @@ UserSchema.pre('save', function(next) {
 })
 
 UserSchema.methods = {
-  comparePassword: function(_password, cb) {
-    bcrypt.compare(_password, this.password, function(err, isMatch) {
-      if (err) return cb(err)
-
-      cb(null, isMatch)
-    })
+  comparePassword: function(_password, password) {
+    return function(cb) {
+      bcrypt.compare(_password, password, function(err, isMatch) {
+        cb(err, isMatch)
+      })
+    }
+    
   }
 }
 

@@ -4,7 +4,7 @@ var path = require("path")
 var wx = require("./index")
 var Movie = require("../app/api/movie")
 var wechatApi = wx.getWechat()
-var host = "http://a16df112.ngrok.io/"
+var host = "http://75705163.ngrok.io/"
 exports.reply = async(ctx, next) => {
     var message = ctx.weixin
     if (message.MsgType === "event") {
@@ -19,7 +19,7 @@ exports.reply = async(ctx, next) => {
                 "回复登录，进入微信登录绑定\n" +
                 "回复游戏，进入游戏页面\n" +
                 "回复电影名字或语音， 查询电影信息\n" +
-                "点击<a href='" + host + "movie'>语音查电影</a>"
+                "点击<a href='" + host + "wechat/movie'>语音查电影</a>"
         } else if (message.Event === "unsubscribe") {
             console.log("无情取关")
             ctx.body = ""
@@ -62,7 +62,7 @@ exports.reply = async(ctx, next) => {
                     title: movie.title,
                     description: movie.title,
                     picUrl: movie.poster,
-                    url: host + "movie/" + movie.id
+                    url: host + "wechat/movie/" + movie.id
                 })
             })
         } else {
@@ -221,7 +221,7 @@ exports.reply = async(ctx, next) => {
                         title: movie.title,
                         description: movie.title,
                         picUrl: movie.poster,
-                        url: host + "movie/" + movie.id
+                        url: host + "wechat/movie/" + movie.id
                     })
                 })
             } else {

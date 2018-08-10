@@ -38,17 +38,29 @@ wechatApi.deleteMenu().then(function() {
 })
 var app = new Koa()
 var Router = require("koa-router")
+var session = require("koa-session")
+var bodyParser = require('koa-bodyparser')
 var router = new Router()
 var game = require("./app/controllers/game")
-
+var User = require('./app/models/user')
 var views = require("koa-views")
 app.use(views(__dirname + "/app/views", {
     extension: "jade"
 }))
-router.get("/movie", game.guess)
-router.get("/movie/:id", game.find)
-router.get("/weixin", wechat.hear)
-router.post("/weixin", wechat.hear)
+app.keys = ['imooc']
+app.use(session(app))
+app.use(bodyParser())
+app.use(async(ctx,next) => {
+    var user = ctx.session.user
+    if (user && user._id) {
+        ctx.session.user = await User.findOne({_id: user._id}).exec()
+        ctx.state.user = ctx.session.user
+    } else {
+        ctx.state.user = null
+    }
+    await next()
+})
+require('./config/routes')(router)
 app.use(router.routes())
     .use(router.allowedMethods())
     // app.use(wechat(wx.wechatOptions.wechat, weixin.reply))

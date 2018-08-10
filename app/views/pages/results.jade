@@ -1,29 +1,31 @@
 extends ../layout
 
 block content
-  .container
-    .row
-      .panel.panel-default
-        .panel-heading
-          h3 #{keyword}
-        .panel-body
-          if movies && movies.length > 0
-            each item in movies
-              .col-md-2
-                .thumbnail
-                  a(href="/movie/#{item._id}")
-                    img(src="#{item.poster}", alt="#{item.title}")
-                  .caption
-                    h4 #{item.title}
-                    p: a.btn.btn-primary(href="/movie/#{item._id}", role="button") 观看预告片
+  .container.listPage
+    h3 #{keyword}
+    .resultsContent
+      .row
+        if movies && movies.length > 0
+          each item in movies
+            .col-md-3
+              .card
+                img.card-img-top(src="#{item.poster}", alt="#{item.title}")
+                .card-body
+                  h5.card-title #{item.title}
+                  p.card-text 导演： #{item.director}
+                  p 类型：
+                    each i in item.genres
+                      span #{i}  
+                  a.btn.btn-primary(href="/movie/#{item._id}", role="button") 观看预告片
+    .row.justify-content-center          
       ul.pagination
         - for (var i = 0; i < totalPage; i++) {
           - if (currentPage == (i + 1)) {
-              li.active
-                span #{currentPage}
+              li.page-item.active
+                a.page-link #{currentPage}
           - }
           - else {
-              li
-                a(href='/results?#{query}&p=#{i}') #{i + 1}
+              li.page-item
+                a.page-link(href='/results?#{query}&p=#{i}') #{i + 1}
           - }
         - }
