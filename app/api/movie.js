@@ -6,6 +6,7 @@ var Movie = require('../models/movie')
 var Category = require('../models/category')
 var koa_request = require("koa2-request")
 var request = Promise.promisify(require('request'))
+var doubanApi = 'https://api.douban.com/v2/movie'
 // index page
 exports.findAll = async() => {
     var categories = await Category
@@ -59,7 +60,7 @@ exports.searchById = async (id) => {
 }
 function updateMovies(movie) {
     var options = {
-        url: "https://api.douban.com/v2/movie/subject/" + movie.doubanId,
+        url: doubanApi + "/subject/" + movie.doubanId,
         json: true
     }
     request(options).then(function(res) {
@@ -99,10 +100,9 @@ function updateMovies(movie) {
         }
     })
 }
-
 exports.searchByDouban = async (q) => {
     var options = {
-        url: "https://api.douban.com/v2/movie/search?q="
+        url: doubanApi + "/search?q="
     }
     options.url += encodeURIComponent(q)
     var response = await koa_request(options)
@@ -129,6 +129,7 @@ exports.searchByDouban = async (q) => {
                         doubanId: item.id,
                         poster: item.images.large,
                         year: item.year,
+                        rating: item.rating.average,
                         genres: item.genres || []
                     })
                     movie = await movie.save()
@@ -143,4 +144,18 @@ exports.searchByDouban = async (q) => {
         })
     }
     return movies
+}
+exports.getComing = async() => {
+    var options = {
+        url: doubanApi + "/coming_soon"
+    }
+    var response = await koa_request(options)
+    var data = JSON.parse(response.body)
+    var subjects = []
+
+    if (data && data.subjects) {
+        subjects = data.subjects
+    }
+    
+    return subjects
 }

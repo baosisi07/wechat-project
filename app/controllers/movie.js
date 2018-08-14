@@ -50,43 +50,36 @@ exports.update = async(ctx, next) => {
     })
   }
 }
-
+var util = require('../../libs/utils')
 // admin poster
-// exports.savePoster = async(ctx, next) => {
-//   var posterData = req.files.uploadPoster
-//   var filePath = posterData.path
-//   var originalFilename = posterData.originalFilename
+exports.savePoster = async(ctx, next) => {
+  var posterData = ctx.request.body.files.uploadPoster
+  var filePath = posterData.path
+  var originalFilename = posterData.name
 
-//   if (originalFilename) {
-//     fs.readFile(filePath, function(err, data) {
-//       var timestamp = Date.now()
-//       var type = posterData.type.split('/')[1]
-//       var poster = timestamp + '.' + type
-//       var newPath = path.join(__dirname, '../../', '/public/upload/' + poster)
-
-//       fs.writeFile(newPath, data, function(err) {
-//         req.poster = poster
-//         next()
-//       })
-//     })
-//   }
-//   else {
-//     next()
-//   }
-// }
+  if (name) {
+    var data = await util.readFileAsync(filePath)
+      var timestamp = Date.now()
+      var type = posterData.type.split('/')[1]
+      var poster = timestamp + '.' + type
+      var newPath = path.join(__dirname, '../../', '/public/upload/' + poster)
+      await util.writeFileAsync(newPath, data)
+      ctx.poster = poster
+  }
+  await next()
+}
 
 // admin post movie
 exports.save = async(ctx, next) => {
-  var id = ctx.request.body.movie._id
-  var movieObj = ctx.request.body.movie
+  var movieObj = ctx.request.body.fields || {}
   var _movie
 
   if (ctx.poster) {
-    movieObj.poster = req.poster
+    movieObj.poster = ctx.poster
   }
 
-  if (id) {
-    var movie = await Movie.findOne({_id:id}).exec()
+  if (movieObj._id) {
+    var movie = await Movie.findOne({_id: movieObj._id}).exec()
 
       _movie = _.extend(movie, movieObj)
       await _movie.save()

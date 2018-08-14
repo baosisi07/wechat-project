@@ -29,12 +29,16 @@ block content
 					.weui-cell__ft=movie.director
 				.weui-cell
 					.weui-cell__bd.weui-cell_primary
-						p 国家
-					.weui-cell__ft=movie.country
+						p 评分
+					.weui-cell__ft=movie.rating
 				.weui-cell
 					.weui-cell__bd.weui-cell_primary
-						p 语言
-					.weui-cell__ft=movie.language
+						p 类型
+					.weui-cell__ft
+						- for (var i = 0; i < movie.genres.length; i++) {
+							span #{movie.genres[i]}
+						- }
+						
 				.weui-cell
 					.weui-cell__bd.weui-cell_primary
 						p 上映年份

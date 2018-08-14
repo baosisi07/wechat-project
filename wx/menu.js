@@ -1,4 +1,5 @@
 "use strict"
+
 module.exports = {
     "button": [
         {
@@ -57,12 +58,12 @@ module.exports = {
                 {
                     "type": "media_id",
                     "name": "下发图片",
-                    "media_id": "iXcIzPk3h7nGQfeffQYsIE8BFpeyGu8Ud0K75T7WCiA"
+                    "media_id": "0NxYsmcsZ9AiyqtjnaSAywVdA7CnTOZNsBezBOk8YhI"
                 },
                 {
-                    "type": "view_limited",
+                    "type": "media_id",
                     "name": "下发图文消息",
-                    "media_id": "iXcIzPk3h7nGQfeffQYsIPjekiG9oezdCbcscwjSG00"
+                    "media_id": "0NxYsmcsZ9AiyqtjnaSAy2J3ZWH-wTKXkgFTlWD6lwk"
                 }
             ]
         }

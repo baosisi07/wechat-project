@@ -1,10 +1,8 @@
 "use strict"
 
 var Koa = require("koa")
-var path = require("path")
 var fs = require("fs")
 var mongoose = require("mongoose")
-var wechat = require("./app/controllers/wechat")
 var dbUrl = 'mongodb://localhost:27017/imooc'
 
 mongoose.connect(dbUrl, { useNewUrlParser: true })
@@ -41,11 +39,14 @@ var Router = require("koa-router")
 var session = require("koa-session")
 var bodyParser = require('koa-bodyparser')
 var router = new Router()
-var game = require("./app/controllers/game")
 var User = require('./app/models/user')
 var views = require("koa-views")
+var moment = require('moment')
 app.use(views(__dirname + "/app/views", {
-    extension: "jade"
+    extension: "jade",
+    locals: {
+        moment: moment
+    }
 }))
 app.keys = ['imooc']
 app.use(session(app))
